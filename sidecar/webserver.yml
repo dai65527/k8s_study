@@ -1,0 +1,25 @@
+# sample of sidecar structure
+#
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webserver
+spec:
+  containers:
+  - name: nginx     # main container
+    image: nginx
+    volumeMounts:
+    - mountPath: /user/share/nginx/html
+      name: contents-vol
+      readOnly: true
+  - name: puller    # sidecar container
+    image: dai65527/c-puller:0.2
+    env:
+    - name: CONTENTS_SOURCE_URL
+      value: "https://github.com/dai65527/k8s_c_puller_webpage"
+    volumeMounts:
+    - mountPath: /data
+      name: contents-vol
+  volumes:          # shared volume
+  - name: contents-vol
+    emptyDir: {}
